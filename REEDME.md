@@ -34,7 +34,7 @@ Lo que se puede visualizar en este grafico es que entre los meses de mayo y sept
 
 2. Numero de Adultos que se hospedaron en el hotel por cada mes, en funcion de los años 2017 y 2018
 
-![Grafico de adulktos hospedados por mes](graficos\reserva_year.png)
+![Grafico de adultos hospedados por mes](graficos\reserva_year.png)
 
 Aca se  puede determinar el aumento de clientes adultos a medidda que se abrio el hotel en 2017 y  a lo largo de 
 2018
