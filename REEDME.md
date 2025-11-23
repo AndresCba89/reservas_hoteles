@@ -65,7 +65,7 @@ El análisis del precio promedio por habitación (`avg_price_per_room`) a lo lar
 
 **Interpretación del Gráfico:**
 
-1.**Precio como Predictor de Riesgo:** La tendencia más significativa es que, en **casi todos los meses**, el **precio promedio de las reservas canceladas (línea roja)** es **significativamente más bajo** que el precio promedio de las reservas no canceladas (línea azul).
+1. **Precio como Predictor de Riesgo:** La tendencia más significativa es que, en **casi todos los meses**, el **precio promedio de las  reservas canceladas (línea roja)** es **significativamente más bajo** que el precio promedio de las reservas no canceladas (línea azul).
   **Implicación:** Esto sugiere que las **tarifas con descuento o las ofertas de bajo costo** están asociadas a un **mayor riesgo de cancelación**. Es probable que los clientes con tarifas más bajas reserven múltiples opciones y cancelen la que no sea la mejor (el fenómeno de *rate-shopping* o *shopping-around*).
 
 2. **Estacionalidad y Demanda:** Se observa que las líneas convergen o se acercan en los meses de **alta demanda** (ej. Julio-Agosto), donde la diferencia de precio entre una reserva cancelada y una no cancelada se reduce, debido a la escasez de oferta general.
@@ -159,7 +159,7 @@ Este gráfico permite contrastar la **volatilidad de la reserva** entre familias
 
 ![Grafico RESERVAS CANCELADAS TOTALES](graficos\bkng_status_month.png)
 
-### 3. Interpretación de Grafico
+### Interpretación de Grafico
 
 1. **Picos de Demanda (Temporadas Altas):**
     * La altura total de las barras (la suma visual de canceladas + no canceladas) indica los meses de mayor actividad comercial.
@@ -172,185 +172,83 @@ Este gráfico permite contrastar la **volatilidad de la reserva** entre familias
    Este gráfico es esencial para la planificación de recursos humanos (`Staffing`):
    En los meses con barras totales más altas, se requiere más personal en Recepción y Reservas, independientemente de si esas reservas se cancelan o no, ya que el trámite administrativo de gestionar la reserva (y su cancelación) consume horas de trabajo.
 
+###  ⚙️ 4. Metodología y Justificación del Procedimiento
+    El enfoque analítico se diseñó siguiendo un flujo de trabajo riguroso dividido en etapas estratégicas, priorizando tanto l  precisión matemática como la interpretabilidad del negocio.
 
+1. **Preparación y Exploración de Datos**
+    Definición del Objetivo: Se estableció booking_status como la variable dependiente (y) y se separó del resto de atributos (X)para evitar el data leakage (fuga de datos).
 
-   ## ⚙️ Metodología y Justificación del Procedimiento
+    Análisis de Desbalance: Mediante y.value_counts(normalize=True), se diagnosticó que las Reservas Canceladas representan el ~3276% del total frente al 67.24% de las No Canceladas.
 
-El enfoque analítico se dividió en tres etapas estratégicas para garantizar la fiabilidad de las predicciones:
+    Justificación: Una proporción de 1:2 justifica el monitoreo de métricas específicas (como Recall) más allá de la simpleExactitud, ya que un modelo sesgado podría ignorar la clase minoritaria.
 
-### 1. Preparación de los Datos (Data Splitting)
-Se separó el dataset en matriz de características (`X`) y vector objetivo (`y`).
-* **Variable Objetivo (`y`):** Se definió `booking_status` como la variable a predecir.
-* **Matriz de Características (`X`):** Se eliminó la variable objetivo del dataset original para evitar el *data leakage* (fuga de datos), asegurando que el modelo solo entrene con información disponible antes del evento de cancelación.
+2. **Estrategia de Validación (Data Splitting)**
+    Para garantizar una evaluación justa, se dividió el dataset en dos subconjuntos: Entrenamiento (70%) y Prueba (30%).
 
-### 2. Análisis de Desbalance de Clases
-Mediante la ejecución de `y.value_counts(normalize=True)`, se diagnosticó la distribución de las clases:
-* **Reservas No Canceladas:** ~67.24%
-* **Reservas Canceladas:** ~32.76%
+    Decisión Técnica Clave (stratify=y): Debido al desbalance detectado, se utilizó una división estratificada. Esto fuerza alalgoritmo a mantener la misma proporción de clases en ambos conjuntos, evitando que el set de prueba sea poco representativo dela realidad.
 
-**Justificación:**
-Aunque no es un desbalance extremo (como en detección de fraude, que suele ser <1%), una proporción de **1:2** justifica el monitoreo de métricas específicas. Si usáramos solo la *Exactitud (Accuracy)*, un modelo "tonto" que prediga siempre "No Cancelado" tendría un 67% de acierto, pero fallaría en el objetivo de negocio (detectar cancelaciones). Por ello, el rendimiento se validará priorizando el **Recall** y el **F1-Score** de la clase minoritaria (`Canceled`).
+3. **Ingeniería de Características (Preprocessing)**
+    Se aplicó una estrategia diferenciada según el tipo de dato:
 
-### 3. Selección del Algoritmo: Decision Tree Classifier
-Se optó por un modelo de **Árbol de Decisión** frente a algoritmos de "caja negra" (como Redes Neuronales) por dos razones principales:
-1.  **Interpretabilidad:** Permite trazar reglas de negocio explícitas (ej. *"Si el lead_time > 100, aumenta la probabilidad de cancelación"*), lo cual es vital para explicar el comportamiento del cliente a la gerencia del hotel.
-2.  **Manejo de Variables Mixtas:** Funciona eficientemente con la mezcla de variables numéricas y categóricas transformadas (One-Hot Encoding) presentes en este dataset.
+    Codificación de Variables Categóricas: Se utilizó One-Hot Encoding para variables nominales (ej. market_segment_type).
 
-### 4. Estrategia de División de Datos (Train-Test Split)
-Para la validación del modelo, se dividió el dataset en dos subconjuntos:
-* **Entrenamiento (70%):** Utilizado para que el algoritmo aprenda los patrones.
-* **Prueba (30%):** Reservado estrictamente para evaluar el rendimiento final con datos no vistos.
+    Optimización: Se excluyeron identificadores únicos (Booking_ID) del encoding para evitar la "maldición de la dimensionalidad"(generar más de 40,000 columnas irrelevantes).
 
-**Decisión Técnica Clave: `stratify=y`**
-Dado el desbalance de clases (67% vs 33%), no se realizó una división aleatoria simple. Se utilizó el parámetro `stratify=y` para forzar al algoritmo a mantener la **misma proporción de clases** en ambos conjuntos.
-* *Por qué:* Sin estratificación, correríamos el riesgo de que el conjunto de prueba ("Test") tuviera casualmente muy pocas cancelaciones, lo que haría que las métricas de evaluación fueran engañosas y poco representativas de la realidad.
+    Manejo de Variables Numéricas: Variables como lead_time y avg_price_per_room se mantuvieron en su formato original, aprovechandola capacidad de los árboles de decisión para manejar magnitudes sin necesidad de escalado.
 
-### 5. Preprocesamiento de Variables (Encoding)
-Para preparar los datos para el algoritmo, se aplicó una estrategia diferenciada según el tipo de dato:
+    Transformación del Target: Se convirtió la variable objetivo a formato binario para el cálculo de métricas:
 
-* **Variables Numéricas (ej. `lead_time`, `avg_price_per_room`):** Se mantuvieron en su formato original, ya que los árboles de decisión pueden manejar magnitudes numéricas directamente sin necesidad de escalado (a diferencia de redes neuronales o KNN).
-* **Variables Categóricas (ej. `market_segment_type`, `room_type`):** Se utilizó **One-Hot Encoding**.
-    * *Justificación:* Se seleccionaron específicamente las variables nominales para ser transformadas en vectores binarios.
-    * *Evitar la Maldición de la Dimensionalidad:* Se excluyeron deliberadamente identificadores únicos (`Booking_ID`) y variables numéricas continuas del proceso de encoding. Incluirlos hubiera generado más de 40,000 características irrelevantes, causando sobreajuste y agotamiento de memoria.
+    Not_Canceled ➝ 1
 
-### 6. Consolidación del Dataset de Entrenamiento
-Una vez transformadas las variables categóricas mediante *One-Hot Encoding*, se procedió a la reconstrucción del set de datos para el entrenamiento:
+    Canceled ➝ 0
 
-* **Alineación de Índices:** Se generó un nuevo DataFrame (`encoded_df`) asegurando que los índices coincidieran con los datos originales (`X_train.index`). Esto es crítico para evitar que las filas se mezclen y asignemos las características de un cliente a otro por error.
-* **Concatenación:** Se utilizó `pd.concat` para fusionar las variables numéricas originales (como `lead_time`, `no_of_adults`) con las nuevas variables binarias generadas.
-* **Resultado:** Se obtuvo una matriz de entrenamiento final puramente numérica, lista para ser procesada por el algoritmo `DecisionTreeClassifier`.
+4. **Consolidación y Limpieza Final**
+    Reconstrucción: Se concatenaron las variables numéricas originales con las nuevas variables codificadas, asegurando laalineación de índices.
 
-### 7. Transformación del Conjunto de Prueba (Test Set)
-Para evaluar el modelo de manera justa, se aplicó al conjunto de prueba (`X_test`) **exactamente la misma transformación** que al conjunto de entrenamiento.
+    Tratamiento del Test Set: Se aplicó transform() (no fit()) al conjunto de prueba para simular un escenario real y evitar fugasde información.
 
-* **Uso de `.transform()` en lugar de `.fit()`:**
-    * Se utilizó el método `ohe.transform()` sobre los datos de prueba utilizando el codificador ya entrenado (`fit`) con los datos de entrenamiento.
-    * **Justificación (Data Leakage):** Nunca debemos hacer `fit` sobre el conjunto de prueba. Si el modelo "viera" y aprendiera las categorías del test set durante la transformación, estaríamos cometiendo "fuga de datos", invalidando la evaluación. Al usar solo `transform`, simulamos un escenario real donde llegan nuevos datos y aplicamos las reglas que ya conocemos.
+    Feature Selection: Se eliminaron las columnas   de texto originales, resultando en una matriz     100% numérica lista para Scikit-Learn.
 
-* **Alineación de Columnas:**
-    * Al igual que en el entrenamiento, se generó un DataFrame con las variables codificadas y se concatenó al `X_test` original, asegurando que el modelo reciba la misma estructura de columnas (mismo número y orden) para poder realizar predicciones.
+### 🧠5. Selección y Configuración del Modelo
+        Se optó por un Decision Tree Classifier     frente a modelos de "caja negra" por su     interpretabilidad, permitiendo trazar   reglas denegocio explícitas (ej. "Si el   lead_time > 100, aumenta el riesgo").
 
-### 8. Depuración Final de Variables (Feature Selection)
-Como paso previo al entrenamiento, se realizó una limpieza definitiva de la matriz de características:
+        Hiperparámetros utilizados:
 
-* **Eliminación de Redundancias:** Se eliminaron del dataset las columnas categóricas originales (formato texto) una vez que su información fue transferida exitosamente a las nuevas columnas binarias (formato numérico).
-* **Preservación de Variables Numéricas:** Se conservaron intactas las variables continuas clave como `lead_time` (días de antelación) y `avg_price_per_room`, ya que su magnitud numérica aporta información directa sobre el comportamiento del cliente sin necesidad de codificación adicional.
-* **Resultado:** Se obtuvo una matriz limpia (`X_train` y `X_test`) compuesta al 100% por datos numéricos, cumpliendo con los requisitos técnicos de la librería Scikit-Learn.
+        Profundidad (max_depth=10): Se limitó la    profundidad para controlar el sobreajuste  (overfitting).
 
----
+        Semilla (random_state=42): Para     garantizar la reproducibilidad de los   experimentos.
 
-## 🧠 Entrenamiento y Configuración del Modelo
+### 📊6.  Análisis de Resultados
+    El modelo fue evaluado utilizando el conjunto de prueba (Test Set) con 10,883 reservas inéditas.
 
-Finalmente, se procedió al ajuste (`fit`) del algoritmo con los datos procesados.
+1. **Reporte de Clasificación**
+    
+    Plaintext
 
-### Hiperparámetros
-Se utilizó un `DecisionTreeClassifier` con los siguientes criterios:
-* **Criterio de División:** "Gini" (para medir la impureza de los nodos).
-* **Profundidad:** Se dejó dinámica para permitir que el árbol aprendiera patrones complejos, controlando el sobreajuste posteriormente mediante la validación con el conjunto de prueba.
-* **Semilla (Random State):** Fijada en 42 para garantizar la reproducibilidad de los resultados en futuras ejecuciones.
+                        precision    recall  f1-score  support
 
----
+        Canceled           0.84      0.79      0.81      3566
+        Not_Canceled       0.90      0.92      0.91      7317
+        accuracy                               0.88     10883
+2. **Interpretación de Métricas de Negocio**
+    Dado que el objetivo es minimizar las pérdidas por cancelaciones, el análisis se centró en la clase minoritaria (Canceled):
 
-## 📢 Conclusiones del Análisis
-El flujo de trabajo implementado permitió transformar datos brutos de reservas hoteleras en un sistema predictivo funcional. 
+    Capacidad de Detección (Recall: 79%):
 
-La metodología aplicada (One-Hot Encoding selectivo + Estratificación) aseguró que el modelo no solo fuera preciso, sino también **justo** al evaluar la clase minoritaria (cancelaciones). Los resultados sugieren que este enfoque puede ser utilizado por la gerencia del hotel para anticiparse a la demanda real y optimizar los ingresos mediante políticas de cancelación dinámicas.
+    El modelo identifica correctamente a casi 8 de cada 10 clientes que van a cancelar. Esto permite al hotel revender esas habitaciones con antelación, recuperando ingresos potenciales.
 
-### 9. Codificación Binaria de la Variable Objetivo
-Para finalizar el preprocesamiento, se transformó la variable dependiente `y` (booking_status) de formato texto a formato numérico binario:
+    **Fiabilidad de la Alerta (Precision: 84%):**
 
-* **Mapeo Aplicado:**
-    * `Not_Canceled` ➝ **1**
-    * `Canceled` ➝ **0**
-* **Justificación:**
-    * Scikit-Learn requiere que el vector objetivo sea numérico para el cálculo de métricas y la optimización de la función de coste.
-    * Se estableció este mapeo manual para tener control total sobre qué clase se considera "positiva" (1) y cuál "negativa" (0) durante la evaluación.
+    Cuando el modelo marca una reserva como "Riesgo", tiene una probabilidad del 84% de estar en lo cierto, permitiendo al equipo de ventas     confiar en las alertas sin perder tiempo en falsos positivos.
 
-## 📊 Análisis de Resultados
+3. **Visualización (Matriz de Confusión)**
+    El análisis visual mediante el mapa de calor (seaborn.heatmap) confirmó que el modelo discrimina efectivamente entre clases. Se observó     un equilibrio saludable en la diagonal principal (aciertos) y un control aceptable de los Falsos Negativos (el error más costoso).
 
-El modelo final (`DecisionTreeClassifier` con `max_depth=10`) fue evaluado utilizando el conjunto de prueba (Test Set) de 10,883 reservas.
+### ✅7. Conclusiones del Proyecto
+    El flujo de trabajo implementado permitió transformar datos brutos en un sistema predictivo funcional con una Exactitud Global del 88%.
 
-### Reporte de Clasificación (Test Set)
-```text
-              precision    recall  f1-score   support
+    Robustez: La mínima diferencia entre la exactitud de entrenamiento (89%) y prueba (88%) confirma que el modelo no sufre de sobreajuste (overfitting) y generaliza bien ante nuevos datos.
 
-    Canceled       0.84      0.79      0.81      3566
-Not_Canceled       0.90      0.92      0.91      7317
+    Utilidad: La metodología aplicada (One-Hot Encoding selectivo + Estratificación) aseguró que el modelo fuera justo al evaluar las cancelaciones.
 
-    accuracy                           0.88     10883
-
-Interpretación de Métricas
-Capacidad de Detección (Recall - Clase 'Canceled'): 79%
-
-El modelo es capaz de identificar correctamente a casi 8 de cada 10 clientes que van a cancelar.
-
-Impacto: Esto permite al hotel anticiparse y revender esas habitaciones con antelación, recuperando ingresos que de otro modo se perderían.
-
-Fiabilidad de la Alerta (Precision - Clase 'Canceled'): 84%
-
-Cuando el modelo marca una reserva como "Riesgo de Cancelación", tiene una probabilidad del 84% de estar en lo cierto.
-
-Impacto: El equipo de ventas puede confiar en estas alertas sin perder demasiado tiempo gestionando falsos positivos.
-
-Estabilidad del Modelo (Overfitting Check):
-
-Exactitud en Entrenamiento: 89%
-
-Exactitud en Prueba: 88%
-
-La mínima diferencia (1%) entre ambos conjuntos confirma que el modelo generaliza bien y no ha memorizado los datos, siendo robusto para predecir nuevas reservas futuras.
-
-### 📉 Visualización del Desempeño: Matriz de Confusión
-
-Para comunicar los resultados de manera intuitiva a los stakeholders, se generó una representación visual de la Matriz de Confusión utilizando `seaborn.heatmap`.
-
-### ¿Por qué esta visualización?
-A diferencia de un simple porcentaje de acierto, el mapa de calor nos permite identificar rápidamente dónde están los errores críticos del modelo:
-* **Eje Y (Real):** Lo que realmente pasó (¿Canceló o no?).
-* **Eje X (Predicción):** Lo que el modelo pensó que pasaría.
-
-El gráfico resultante (`heatmap`) facilita la detección de:
-1.  **Aciertos (Diagonal Principal):** Casos donde el color es más intenso, indicando que el modelo acertó la mayoría de las veces.
-2.  **Fugas de Cancelaciones (Esquina Superior Derecha):** Reservas que se cancelaron pero el modelo predijo que NO (el error más costoso para el hotel).
-
-### Precisión Global del Modelo
-Finalmente, se calculó la métrica de exactitud (`accuracy_score`) para tener un indicador resumen del proyecto.
-
-> **Resultado Final:** El modelo alcanzó una precisión global del **~88%** en el conjunto de prueba.
-
-Esto significa que, de cada 100 reservas procesadas, el algoritmo es capaz de clasificar correctamente el estado final de 88 de ellas, proporcionando una herramienta robusta para la planificación de la ocupación hotelera.
-
-
-
-
-
-
-
-
-#### AL FINAL DE TODO ###
-
-
-## 📉 Evaluación del Modelo y Métricas de Desempeño
-
-Una vez entrenado el modelo, se procedió a evaluar su capacidad predictiva con el conjunto de prueba (`X_test`), simulando su comportamiento con datos reales desconocidos.
-
-### Matriz de Confusión e Interpretación de Errores
-Se analizó la matriz de confusión para entender no solo *cuánto* se equivoca el modelo, sino *cómo* se equivoca:
-
-* **Falsos Negativos (Riesgo Crítico):** Ocurre cuando el modelo predice que el cliente **NO** cancelará, pero finalmente **SÍ** cancela.
-    * *Impacto de Negocio:* El hotel se queda con una habitación vacía que podría haber revendido. Se buscó minimizar este error optimizando el `Recall` de la clase "Canceled".
-* **Falsos Positivos:** Ocurre cuando el modelo predice que el cliente cancelará, pero realmente llega al hotel.
-    * *Impacto de Negocio:* Puede llevar a un *Overbooking* agresivo si no se gestiona con cuidado.
-
-### Métricas Clave Seleccionadas
-
-1.  **Recall (Sensibilidad) para Cancelaciones:**
-    * Esta métrica fue la prioritaria. Nos indica: *De todas las cancelaciones reales que ocurrieron, ¿qué porcentaje fue capaz de detectar nuestro modelo?* Un Recall alto garantiza que estamos "atrapando" a la mayoría de los clientes con riesgo de fuga.
-
-2.  **F1-Score:**
-    * Al tener un desbalance de clases, el F1-Score se utilizó como balance armónico entre Precisión y Recall, ofreciendo una visión más honesta del rendimiento general que la simple "Exactitud".
-
-## ✅ Conclusión del Proyecto
-El análisis confirma que es posible predecir la cancelación de reservas con un grado de confianza accionable utilizando únicamente datos administrativos del momento de la reserva.
-
-El modelo de **Árbol de Decisión** demostró ser efectivo para capturar reglas de negocio complejas (como la interacción entre el tiempo de antelación `lead_time` y el tipo de depósito), proporcionando una herramienta transparente para que el equipo de Revenue Management pueda tomar medidas preventivas (ej. contactar al cliente o pedir depósitos) en las reservas marcadas como "Alto Riesgo".
+    Impacto: Los resultados sugieren que este enfoque puede ser utilizado por la gerencia del hotel para anticiparse a la demanda real, permitiendo aplicar políticas preventivas (como solicitar depósitos) en las reservas identificadas como de alto riesgo.
