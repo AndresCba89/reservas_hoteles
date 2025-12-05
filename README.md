@@ -128,7 +128,7 @@ El análisis del precio promedio por habitación (`avg_price_per_room`) a lo lar
 
 
 ### 3.5 RESERVAS CANCELADAS AÑO 2019 EN FUNCION DE LA PRESENCIA DE NIÑOS EN LA RESERVA
-    ## Tasa de Cancelación Mensual por Segmento Familiar (Año 2018)
+## Tasa de Cancelación Mensual por Segmento Familiar (Año 2018)
 
 ![Grafico = RESERVAS CANCELADAS AÑO 2018](graficos/canceld_child_2018.png)
 
@@ -173,7 +173,7 @@ Este gráfico permite contrastar la **volatilidad de la reserva** entre familias
    En los meses con barras totales más altas, se requiere más personal en Recepción y Reservas, independientemente de si esas reservas se cancelan o no, ya que el trámite administrativo de gestionar la reserva (y su cancelación) consume horas de trabajo.
 
 ### 4. Metodología y Justificación del Procedimiento
-    El enfoque analítico se diseñó siguiendo un flujo de trabajo riguroso dividido en etapas estratégicas, priorizando tanto l  precisión matemática como la interpretabilidad del negocio.
+El enfoque analítico se diseñó siguiendo un flujo de trabajo riguroso dividido en etapas estratégicas, priorizando tanto l  precisión matemática como la interpretabilidad del negocio.
 
 1. **Preparación y Exploración de Datos**
     Definición del Objetivo: Se estableció booking_status como la variable dependiente (y) y se separó del resto de atributos (X)para evitar el data leakage (fuga de datos).
@@ -210,25 +210,25 @@ Este gráfico permite contrastar la **volatilidad de la reserva** entre familias
     Feature Selection: Se eliminaron las columnas   de texto originales, resultando en una matriz     100% numérica lista para Scikit-Learn.
 
 ### 5. Selección y Configuración del Modelo
-        Se optó por un Decision Tree Classifier     frente a modelos de "caja negra" por su     interpretabilidad, permitiendo trazar   reglas denegocio explícitas (ej. "Si el   lead_time > 100, aumenta el riesgo").
+Se optó por un Decision Tree Classifier     frente a modelos de "caja negra" por su     interpretabilidad, permitiendo trazar   reglas denegocio explícitas (ej. "Si el   lead_time > 100, aumenta el riesgo").
 
-        Hiperparámetros utilizados:
+Hiperparámetros utilizados:
 
-        Profundidad (max_depth=10): Se limitó la    profundidad para controlar el sobreajuste  (overfitting).
+Profundidad (max_depth=10): Se limitó la    profundidad para controlar el sobreajuste  (overfitting).
 
-        Semilla (random_state=42): Para     garantizar la reproducibilidad de los   experimentos.
+Semilla (random_state=42): Para     garantizar la reproducibilidad de los   experimentos.
 
 
 ### 6.  Análisis de Resultados
-    El modelo fue evaluado utilizando el conjunto de prueba (Test Set) con 10,883 reservas inéditas.
+El modelo fue evaluado utilizando el conjunto de prueba (Test Set) con 10,883 reservas inéditas.
 
 1. **Reporte de Clasificación**
     
-                        precision    recall  f1-score  support
+                                precision    recall  f1-score  support
 
-        Canceled           0.84      0.79      0.81      3566
-        Not_Canceled       0.90      0.92      0.91      7317
-        accuracy                               0.88     10883
+                Canceled           0.84      0.79      0.81      3566
+                Not_Canceled       0.90      0.92      0.91      7317
+                accuracy                               0.88     10883
 2. **Interpretación de Métricas de Negocio**
     Dado que el objetivo es minimizar las pérdidas por cancelaciones, el análisis se centró en la clase minoritaria (Canceled):
 
@@ -244,10 +244,10 @@ Este gráfico permite contrastar la **volatilidad de la reserva** entre familias
     El análisis visual mediante el mapa de calor (seaborn.heatmap) confirmó que el modelo discrimina efectivamente entre clases. Se observó     un equilibrio saludable en la diagonal principal (aciertos) y un control aceptable de los Falsos Negativos (el error más costoso).
 
 ### 7. Conclusiones del Proyecto
-    El flujo de trabajo implementado permitió transformar datos brutos en un sistema predictivo funcional con una Exactitud Global del 88%.
+El flujo de trabajo implementado permitió transformar datos brutos en un sistema predictivo funcional con una Exactitud Global del  88%.
 
-    Robustez: La mínima diferencia entre la exactitud de entrenamiento (89%) y prueba (88%) confirma que el modelo no sufre de sobreajuste (overfitting) y generaliza bien ante nuevos datos.
+Robustez: La mínima diferencia entre la exactitud de entrenamiento (89%) y prueba (88%) confirma que el modelo no sufre de  sobreajuste (overfitting) y generaliza bien ante nuevos datos.
 
-    Utilidad: La metodología aplicada (One-Hot Encoding selectivo + Estratificación) aseguró que el modelo fuera justo al evaluar las cancelaciones.
+Utilidad: La metodología aplicada (One-Hot Encoding selectivo + Estratificación) aseguró que el modelo fuera justo al evaluar las   cancelaciones.
 
-    Impacto: Los resultados sugieren que este enfoque puede ser utilizado por la gerencia del hotel para anticiparse a la demanda real, permitiendo aplicar políticas preventivas (como solicitar depósitos) en las reservas identificadas como de alto riesgo.
+Impacto: Los resultados sugieren que este enfoque puede ser utilizado por la gerencia del hotel para anticiparse a la demanda real,     permitiendo aplicar políticas preventivas (como solicitar depósitos) en las reservas identificadas como de alto riesgo.
