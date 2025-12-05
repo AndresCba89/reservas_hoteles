@@ -16,25 +16,25 @@ El proyecto persigue un objetivo dual:
 ---
 ## 2. DESCRIPCION DE VARIABLES.
 
-**`Booking_ID`** | Categórico | Identificador único de cada reserva (ej. INN00001). | Se elimina. No tiene valor predictivo. |
-| **`no_of_adults`** | Numérico | Número de adultos incluidos en la reserva. | Factor demográfico y de ocupación. |
-| **`no_of_children`** | Numérico | Número de niños incluidos en la reserva. | Factor demográfico y de ocupación. |
-| **`no_of_weekend_nights`** | Numérico | Número de noches de fin de semana (sábado o domingo) reservadas. | Duración de la estancia. |
-| **`no_of_week_nights`** | Numérico | Número de noches de días laborables (lunes a viernes) reservadas. | Duración de la estancia. |
-| **`type_of_meal_plan`** | Categórico | Tipo de plan de comidas elegido (ej. Meal Plan 1, Not Selected). | Factor de *engagement* y gasto del cliente. |
-| **`required_car_parking_space`** | Binario | Indica si se solicitó una plaza de aparcamiento (1) o no (0). | Factor de demanda de servicios adicionales. |
-| **`room_type_reserved`** | Categórico | Tipo de habitación reservada (ej. Room\_Type 1, Room\_Type 4). | Impacto en la tarifa y la disponibilidad. |
-| **`lead_time`** | Numérico | **Tiempo de Anticipación.** Número de días entre la fecha de reserva y la fecha de llegada. | **CRÍTICA.** Principal predictor de cancelación. |
-| **`arrival_year`** | Numérico | Año de llegada del huésped. | Factor temporal. |
-| **`arrival_month`** | Numérico | Mes de llegada del huésped. | Factor estacional de demanda. |
+**`Booking_ID`** | Categórico | Identificador único de cada reserva (ej. INN00001). | Se elimina. No tiene valor predictivo. |\
+| **`no_of_adults`** | Numérico | Número de adultos incluidos en la reserva. | Factor demográfico y de ocupación. |\
+| **`no_of_children`** | Numérico | Número de niños incluidos en la reserva. | Factor demográfico y de ocupación. |\
+| **`no_of_weekend_nights`** | Numérico | Número de noches de fin de semana (sábado o domingo) reservadas. | Duración de la estancia. |\
+| **`no_of_week_nights`** | Numérico | Número de noches de días laborables (lunes a viernes) reservadas. | Duración de la estancia. |\
+| **`type_of_meal_plan`** | Categórico | Tipo de plan de comidas elegido (ej. Meal Plan 1, Not Selected). | Factor de *engagement* y gasto del cliente. |\
+| **`required_car_parking_space`** | Binario | Indica si se solicitó una plaza de aparcamiento (1) o no (0). | Factor de demanda de servicios adicionales. |\
+| **`room_type_reserved`** | Categórico | Tipo de habitación reservada (ej. Room\_Type 1, Room\_Type 4). | Impacto en la tarifa y la disponibilidad. |\
+| **`lead_time`** | Numérico | **Tiempo de Anticipación.** Número de días entre la fecha de reserva y la fecha de llegada. | **CRÍTICA.** Principal predictor de cancelación. |\
+| **`arrival_year`** | Numérico | Año de llegada del huésped. | Factor temporal. |\
+| **`arrival_month`** | Numérico | Mes de llegada del huésped. | Factor estacional de deman\da. |\
 | **`arrival_date`** | Numérico | Día del mes de llegada del huésped. | Factor temporal. |
-| **`market_segment_type`** | Categórico | Canal por el que se hizo la reserva (Online, Offline, Corporate, Aviation, Complementary). | **CRÍTICA.** Define el comportamiento de cancelación. |
-| **`repeated_guest`** | Binario | Indica si el huésped es recurrente (1) o nuevo (0). | Fidelidad del cliente. |
-| **`no_of_previous_cancellations`** | Numérico | Número de cancelaciones previas del mismo huésped. | Historial de riesgo del cliente. |
-| **`no_of_previous_bookings_not_canceled`** | Numérico | Número de reservas completadas previamente por el huésped. | Historial de fidelidad. |
-| **`avg_price_per_room`** | Numérico | Precio promedio diario de la habitación para la estancia. | Factor económico. |
-| **`no_of_special_requests`** | Numérico | Número de solicitudes especiales realizadas por el huésped (ej. cuna, vistas). | Nivel de compromiso del huésped. |
-| **`booking_status`** | Categórico | **VARIABLE OBJETIVO.** Estado final de la reserva ('Canceled' o 'Not\_Canceled'). | **Variable a predecir.** |
+| **`market_segment_type`** | Categórico | Canal por el que se hizo la reserva (Online, Offline, Corporate, Aviation, Complementary). |\ **CRÍTICA.** Define el comportamiento de cancelación. |\
+| **`repeated_guest`** | Binario | Indica si el huésped es recurrente (1) o nuevo (0). | Fidelidad del cliente. |\
+| **`no_of_previous_cancellations`** | Numérico | Número de cancelaciones previas del mismo huésped. | Historial de riesgo del cliente. |\
+| **`no_of_previous_bookings_not_canceled`** | Numérico | Número de reservas completadas previamente por el huésped. | Historial de fidelidad. |\
+| **`avg_price_per_room`** | Numérico | Precio promedio diario de la habitación para la estancia. | Factor económico. |\
+| **`no_of_special_requests`** | Numérico | Número de solicitudes especiales realizadas por el huésped (ej. cuna, vistas). | Nivel de compromiso del huésped. |\
+| **`booking_status`** | Categórico | **VARIABLE OBJETIVO.** Estado final de la reserva ('Canceled' o 'Not\_Canceled'). | **Variable a predecir.** |\
 
 ## 3. Análisis Exploratorio de Datos (EDA)
 
@@ -59,8 +59,7 @@ Se inició el análisis enfocándose en las variables que definen la **composici
 
  ### 3.2  Precio promedio por habitación por mes y estado de la reserva
     
-![Grafico de reservas por promedio de precio de habitacion](graficos\avg_room.png)
-
+![Grafico de reservas por promedio de precio de habitacion](graficos/avg_room.png)
 El análisis del precio promedio por habitación (`avg_price_per_room`) a lo largo de los meses revela una pauta de comportamiento de riesgo clave. 
 
 **Interpretación del Gráfico:**
@@ -74,7 +73,7 @@ El análisis del precio promedio por habitación (`avg_price_per_room`) a lo lar
 
 ### 3.3 Precio promedio por segmento de mercado y estado de la reserva
 
-![Grafico de Precio promedio por segmento de mercado y estado de la reserva](graficos\avg_seg.png)
+![Grafico de Precio promedio por segmento de mercado y estado de la reserva](graficos/avg_seg.png)
 
 **Interpretación del Gráfico:**
 
@@ -93,7 +92,7 @@ El análisis del precio promedio por habitación (`avg_price_per_room`) a lo lar
 
 ### 3.3 CANTIDAD DE ADULTOS QUE SER REGISTRARON POR MES EN LOS AÑOS 2017 Y 2018
 
-![Grafico de Precio promedio por segmento de mercado y estado de la reserva](graficos\reserva_year.png)
+![Grafico de Precio promedio por segmento de mercado y estado de la reserva](graficos/reserva_year.png)
 
 **Interpretación del Gráfico:**
 
@@ -110,7 +109,7 @@ El análisis del precio promedio por habitación (`avg_price_per_room`) a lo lar
 
 ### 3.4 RESERVAS CANCELADAS AÑO 2017 EN FUNCION DE LA PRESENCIA DE NIÑOS EN LA RESERVA
 
-![Grafico RESERVAS CANCELADAS AÑO 2017](graficos\canceld_child_2017.png)
+![Grafico RESERVAS CANCELADAS AÑO 2017](graficos/canceld_child_2017.png)
 
 
 **Interpretación del Gráfico:**
@@ -130,7 +129,7 @@ El análisis del precio promedio por habitación (`avg_price_per_room`) a lo lar
 ### 3.5 RESERVAS CANCELADAS AÑO 2019 EN FUNCION DE LA PRESENCIA DE NIÑOS EN LA RESERVA
     ## Tasa de Cancelación Mensual por Segmento Familiar (Año 2018)
 
-![Grafico = RESERVAS CANCELADAS AÑO 2018](graficos\canceld_child_2018.png)
+![Grafico = RESERVAS CANCELADAS AÑO 2018](graficos/canceld_child_2018.png)
 
 
 **Interpretación del Gráfico:**
@@ -157,7 +156,7 @@ Este gráfico permite contrastar la **volatilidad de la reserva** entre familias
 
 ### 3.6 RESERVAS CANCELADAS, EN FUNCION DE LAS RESERVAS SOLICITADAS.
 
-![Grafico RESERVAS CANCELADAS TOTALES](graficos\bkng_status_month.png)
+![Grafico RESERVAS CANCELADAS TOTALES](graficos/bkng_status_month.png)
 
 ### Interpretación de Grafico
 
