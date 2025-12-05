@@ -60,6 +60,7 @@ Se inició el análisis enfocándose en las variables que definen la **composici
  ### 3.2  Precio promedio por habitación por mes y estado de la reserva
     
 ![Grafico de reservas por promedio de precio de habitacion](graficos/avg_room.png)
+
 El análisis del precio promedio por habitación (`avg_price_per_room`) a lo largo de los meses revela una pauta de comportamiento de riesgo clave. 
 
 **Interpretación del Gráfico:**
